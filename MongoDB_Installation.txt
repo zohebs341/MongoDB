@@ -1,7 +1,0 @@
-MongoDB Installation as a POD:
-
-1. In order to store DB data, storage is required. So we have to define/create storage class for mongo.
-2. Create a service - Headless service for MongoDB.
-3. Create statefulset - similar to replicaset.
-
-https://docs.aws.amazon.com/eks/latest/userguide/storage-classes.html
