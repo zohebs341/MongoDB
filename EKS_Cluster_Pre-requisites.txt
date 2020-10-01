@@ -1,0 +1,330 @@
+https://linuxconfig.org/how-to-install-pip-in-redhat-8
+
+dnf install python2-pip
+pip2 --version
+pip2 install awscli
+---------------------
+Configure AWS CLI:
+
+[root@ip-172-31-47-231 ~]# aws configure
+AWS Access Key ID [None]: AKIASR6RME64BGK4KG7N
+AWS Secret Access Key [None]: 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
+Default region name [None]: us-east-2
+Default output format [None]:
+[root@ip-172-31-47-231 ~]# ll -a
+total 36
+dr-xr-x---.  5 root root  175 Sep 18 08:43 .
+dr-xr-xr-x. 18 root root  236 Apr 23 05:19 ..
+-rw-------.  1 root root 6514 Apr 23 05:24 anaconda-ks.cfg
+drwxr-xr-x.  2 root root   39 Sep 18 08:43 .aws
+-rw-r--r--.  1 root root   18 Aug 12  2018 .bash_logout
+-rw-r--r--.  1 root root  176 Aug 12  2018 .bash_profile
+-rw-r--r--.  1 root root  176 Aug 12  2018 .bashrc
+drwx------.  3 root root   17 Sep 18 08:41 .cache
+-rw-r--r--.  1 root root  100 Aug 12  2018 .cshrc
+-rw-------.  1 root root 6300 Apr 23 05:24 original-ks.cfg
+drwx------.  2 root root   29 Sep 18 08:19 .ssh
+-rw-r--r--.  1 root root  129 Aug 12  2018 .tcshrc
+[root@ip-172-31-47-231 ~]# cd .aws/
+[root@ip-172-31-47-231 .aws]# ll
+total 8
+-rw-------. 1 root root  29 Sep 18 08:43 config
+-rw-------. 1 root root 116 Sep 18 08:43 credentials
+[root@ip-172-31-47-231 .aws]# vi config
+[root@ip-172-31-47-231 .aws]# aws s3 ls
+[root@ip-172-31-47-231 .aws]#
+
+----------------------------------------------------------
+Install eksctl in AWS:https://docs.aws.amazon.com/eks/latest/userguide/getting-started-eksctl.html#eksctl-kubectl
+
+[root@ip-172-31-47-231 .aws]# curl --silent --location "https://github.com/weaveworks/eksctl/releases/latest/download/eksctl_$(uname -s)_amd64.tar.gz" | tar xz -C /tmp
+[root@ip-172-31-47-231 .aws]# ll
+total 8
+-rw-------. 1 root root  29 Sep 18 08:43 config
+-rw-------. 1 root root 116 Sep 18 08:43 credentials
+[root@ip-172-31-47-231 .aws]# pwd
+/root/.aws
+[root@ip-172-31-47-231 .aws]# cd /tmp
+[root@ip-172-31-47-231 tmp]# ll
+total 81484
+-rwxr-xr-x. 1 root root 83439616 Sep  4 11:34 eksctl
+drwx------. 3 root root       17 Sep 18 08:18 systemd-private-f5a6b77a33674e98aafaef98c8d0a924-chronyd.service-Tkk7RY
+[root@ip-172-31-47-231 tmp]# sudo mv /tmp/eksctl /usr/local/bin
+[root@ip-172-31-47-231 tmp]# eksctl version
+0.27.0
+------------------------------------------------------
+Creating AWS EKS Cluster:
+
+eksctl create cluster --name UAT_EKS --region us-east-2 --nodegroup-name worker-nodes node-type t3.small --managed
+
+==========================================================================================================
+
+[root@ip-172-31-47-231 tmp]# eksctl create cluster --name uat-eks --region us-east-2 --nodegroup-name worker-nodes --node-type t3.small --managed
+[?]  eksctl version 0.27.0
+[?]  using region us-east-2
+[?]  setting availability zones to [us-east-2c us-east-2a us-east-2b]
+[?]  subnets for us-east-2c - public:192.168.0.0/19 private:192.168.96.0/19
+[?]  subnets for us-east-2a - public:192.168.32.0/19 private:192.168.128.0/19
+[?]  subnets for us-east-2b - public:192.168.64.0/19 private:192.168.160.0/19
+[?]  using Kubernetes version 1.17
+[?]  creating EKS cluster "uat-eks" in "us-east-2" region with managed nodes
+[?]  will create 2 separate CloudFormation stacks for cluster itself and the initial managed nodegroup
+[?]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=us-east-2 --cluster=uat-eks'
+[?]  CloudWatch logging will not be enabled for cluster "uat-eks" in "us-east-2"
+[?]  you can enable it with 'eksctl utils update-cluster-logging --region=us-east-2 --cluster=uat-eks'
+[?]  Kubernetes API endpoint access will use default of {publicAccess=true, privateAccess=false} for cluster "uat-eks" in "us-east-2"
+[?]  2 sequential tasks: { create cluster control plane "uat-eks", 2 sequential sub-tasks: { no tasks, create managed nodegroup "worker-nodes" } }
+[?]  building cluster stack "eksctl-uat-eks-cluster"
+[?]  deploying stack "eksctl-uat-eks-cluster"
+===================================================================================================================
+[root@ip-172-31-47-231 tmp]# eksctl create cluster --name uat-eks --region us-east-2 --nodegroup-name worker-nodes --node-type t3.small --managed
+[?]  eksctl version 0.27.0
+[?]  using region us-east-2
+[?]  setting availability zones to [us-east-2c us-east-2a us-east-2b]
+[?]  subnets for us-east-2c - public:192.168.0.0/19 private:192.168.96.0/19
+[?]  subnets for us-east-2a - public:192.168.32.0/19 private:192.168.128.0/19
+[?]  subnets for us-east-2b - public:192.168.64.0/19 private:192.168.160.0/19
+[?]  using Kubernetes version 1.17
+[?]  creating EKS cluster "uat-eks" in "us-east-2" region with managed nodes
+[?]  will create 2 separate CloudFormation stacks for cluster itself and the initial managed nodegroup
+[?]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=us-east-2 --cluster=uat-eks'
+[?]  CloudWatch logging will not be enabled for cluster "uat-eks" in "us-east-2"
+[?]  you can enable it with 'eksctl utils update-cluster-logging --region=us-east-2 --cluster=uat-eks'
+[?]  Kubernetes API endpoint access will use default of {publicAccess=true, privateAccess=false} for cluster "uat-eks" in "us-east-2"
+[?]  2 sequential tasks: { create cluster control plane "uat-eks", 2 sequential sub-tasks: { no tasks, create managed nodegroup "worker-nodes" } }
+[?]  building cluster stack "eksctl-uat-eks-cluster"
+[?]  deploying stack "eksctl-uat-eks-cluster"
+[?]  building managed nodegroup stack "eksctl-uat-eks-nodegroup-worker-nodes"
+[?]  deploying stack "eksctl-uat-eks-nodegroup-worker-nodes"
+
+===========================================================================================
+
+Go to cloudformation - stack -events
+Go to VPC - subnets
+
+Verify .kube file- once cluster is created..
+# ls .kube/
+
+=============Cluster Created=====================
+[root@ip-172-31-47-231 tmp]# eksctl create cluster --name uat-eks --region us-east-2 --nodegroup-name worker-nodes --node-type t3.small --managed
+[?]  eksctl version 0.27.0
+[?]  using region us-east-2
+[?]  setting availability zones to [us-east-2c us-east-2a us-east-2b]
+[?]  subnets for us-east-2c - public:192.168.0.0/19 private:192.168.96.0/19
+[?]  subnets for us-east-2a - public:192.168.32.0/19 private:192.168.128.0/19
+[?]  subnets for us-east-2b - public:192.168.64.0/19 private:192.168.160.0/19
+[?]  using Kubernetes version 1.17
+[?]  creating EKS cluster "uat-eks" in "us-east-2" region with managed nodes
+[?]  will create 2 separate CloudFormation stacks for cluster itself and the initial managed nodegroup
+[?]  if you encounter any issues, check CloudFormation console or try 'eksctl utils describe-stacks --region=us-east-2 --cluster=uat-eks'
+[?]  CloudWatch logging will not be enabled for cluster "uat-eks" in "us-east-2"
+[?]  you can enable it with 'eksctl utils update-cluster-logging --region=us-east-2 --cluster=uat-eks'
+[?]  Kubernetes API endpoint access will use default of {publicAccess=true, privateAccess=false} for cluster "uat-eks" in "us-east-2"
+[?]  2 sequential tasks: { create cluster control plane "uat-eks", 2 sequential sub-tasks: { no tasks, create managed nodegroup "worker-nodes" } }
+[?]  building cluster stack "eksctl-uat-eks-cluster"
+[?]  deploying stack "eksctl-uat-eks-cluster"
+[?]  building managed nodegroup stack "eksctl-uat-eks-nodegroup-worker-nodes"
+[?]  deploying stack "eksctl-uat-eks-nodegroup-worker-nodes"
+[?]  waiting for the control plane availability...
+[?]  saved kubeconfig as "/root/.kube/config"
+[?]  no tasks
+[?]  all EKS cluster resources for "uat-eks" have been created
+[?]  nodegroup "worker-nodes" has 2 node(s)
+[?]  node "ip-192-168-51-227.us-east-2.compute.internal" is ready
+[?]  node "ip-192-168-77-172.us-east-2.compute.internal" is ready
+[?]  waiting for at least 2 node(s) to become ready in "worker-nodes"
+[?]  nodegroup "worker-nodes" has 2 node(s)
+[?]  node "ip-192-168-51-227.us-east-2.compute.internal" is ready
+[?]  node "ip-192-168-77-172.us-east-2.compute.internal" is ready
+[?]  kubectl not found, v1.10.0 or newer is required
+[?]  cluster should be functional despite missing (or misconfigured) client binaries
+[?]  EKS cluster "uat-eks" in "us-east-2" region is ready
+[root@ip-172-31-47-231 tmp]#
+=========Install kubectl in rhel========
+curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.11/2020-08-04/bin/linux/amd64/kubectl ----version 15
+
+[root@ip-172-31-47-231 tmp]# curl -o kubectl https://amazon-eks.s3.us-west-2.amazonaws.com/1.15.11/2020-08-04/bin/linux/amd64/kubectl
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 55.1M  100 55.1M    0     0  7423k      0  0:00:07  0:00:07 --:--:-- 8436k
+[root@ip-172-31-47-231 tmp]# ll
+total 56512
+-rw-r--r--. 1 root root 57867699 Sep 18 09:18 kubectl
+drwx------. 3 root root       17 Sep 18 08:18 systemd-private-f5a6b77a33674e98aafaef98c8d0a924-chronyd.service-Tkk7RY
+[root@ip-172-31-47-231 tmp]# chmod +x ./kubectl
+[root@ip-172-31-47-231 tmp]# mkdir -p $HOME/bin && cp ./kubectl $HOME/bin/kubectl && export PATH=$PATH:$HOME/bin
+[root@ip-172-31-47-231 tmp]# kubectl version --short --client
+Client Version: v1.15.11-eks-065dce
+[root@ip-172-31-47-231 tmp]#
+
+========================================
+https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+
+===========================================
+AWS EBS Driver: https://docs.aws.amazon.com/eks/latest/userguide/ebs-csi.html
+
+curl -O https://raw.githubusercontent.com/kubernetes-sigs/aws-ebs-csi-driver/v0.6.0/docs/example-iam-policy.json
+aws iam create-policy --policy-name Amazon_EBS_CSI_Driver --policy-document file://example-iam-policy.json
+--
+[root@ip-172-31-47-231 mongodb]# cat example-iam-policy.json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:AttachVolume",
+        "ec2:CreateSnapshot",
+        "ec2:CreateTags",
+        "ec2:CreateVolume",
+        "ec2:DeleteSnapshot",
+        "ec2:DeleteTags",
+        "ec2:DeleteVolume",
+        "ec2:DescribeAvailabilityZones",
+        "ec2:DescribeInstances",
+        "ec2:DescribeSnapshots",
+        "ec2:DescribeTags",
+        "ec2:DescribeVolumes",
+        "ec2:DescribeVolumesModifications",
+        "ec2:DetachVolume",
+        "ec2:ModifyVolume"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+[root@ip-172-31-47-231 mongodb]# aws iam create-policy --policy-name Amazon_EBS_CSI_Driver \
+> ^C
+[root@ip-172-31-47-231 mongodb]# aws iam create-policy --policy-name Amazon_EBS_CSI_Driver --policy-document file://example-iam-policy.json
+{
+    "Policy": {
+        "PolicyName": "Amazon_EBS_CSI_Driver",
+        "PermissionsBoundaryUsageCount": 0,
+        "CreateDate": "2020-09-18T12:02:50Z",
+        "AttachmentCount": 0,
+        "IsAttachable": true,
+        "PolicyId": "ANPASR6RME64FJ4OZFXQU",
+        "DefaultVersionId": "v1",
+        "Path": "/",
+        "Arn": "arn:aws:iam::175995889592:policy/Amazon_EBS_CSI_Driver",
+        "UpdateDate": "2020-09-18T12:02:50Z"
+    }
+}
+[root@ip-172-31-47-231 mongodb]#
+--
+kubectl -n kube-system describe configmap aws-auth
+[root@ip-172-31-47-231 mongodb]# kubectl -n kube-system describe configmap aws-auth
+Name:         aws-auth
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+mapRoles:
+----
+- groups:
+  - system:bootstrappers
+  - system:nodes
+  rolearn: arn:aws:iam::175995889592:role/eksctl-uat-eks-nodegroup-worker-n-NodeInstanceRole-1OXCKSX8AB2UR
+  username: system:node:{{EC2PrivateDNSName}}
+
+Events:  <none>
+--
+aws iam attach-role-policy --policy-arn arn:aws:iam::175995889592:policy/Amazon_EBS_CSI_Driver --role-name eksctl-uat-eks-nodegroup-worker-n-NodeInstanceRole-1OXCKSX8AB2UR
+
+DeployEBS Driver:
+kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
+==============
+[root@ip-172-31-47-231 mongodb]# aws iam attach-role-policy --policy-arn arn:aws:iam::175995889592:policy/Amazon_EBS_CSI_Driver --role-name eksctl-uat-eks-nodegroup-worker-n-NodeInstanceRole-1OXCKSX8AB2UR
+[root@ip-172-31-47-231 mongodb]# kubectl apply -k "github.com/kubernetes-sigs/aws-ebs-csi-driver/deploy/kubernetes/overlays/stable/?ref=master"
+serviceaccount/ebs-csi-controller-sa created
+clusterrole.rbac.authorization.k8s.io/ebs-external-attacher-role created
+clusterrole.rbac.authorization.k8s.io/ebs-external-provisioner-role created
+clusterrolebinding.rbac.authorization.k8s.io/ebs-csi-attacher-binding created
+clusterrolebinding.rbac.authorization.k8s.io/ebs-csi-provisioner-binding created
+deployment.apps/ebs-csi-controller created
+daemonset.apps/ebs-csi-node created
+csidriver.storage.k8s.io/ebs.csi.aws.com created
+[root@ip-172-31-47-231 mongodb]#
+
+=================================================
+[root@ip-172-31-47-231 nfs-provisioner]# kubectl describe sc gp2
+Name:            gp2
+IsDefaultClass:  Yes
+Annotations:     kubectl.kubernetes.io/last-applied-configuration={"apiVersion":"storage.k8s.io/v1","kind":"StorageClass","metadata":{"annotations":{"storageclass.kubernetes.io/is-default-class":"true"},"name":"gp2"},"parameters":{"fsType":"ext4","type":"gp2"},"provisioner":"kubernetes.io/aws-ebs","volumeBindingMode":"WaitForFirstConsumer"}
+,storageclass.kubernetes.io/is-default-class=true
+Provisioner:           kubernetes.io/aws-ebs
+Parameters:            fsType=ext4,type=gp2
+AllowVolumeExpansion:  <unset>
+MountOptions:          <none>
+ReclaimPolicy:         Delete
+VolumeBindingMode:     WaitForFirstConsumer
+Events:                <none>
+[root@ip-172-31-47-231 nfs-provisioner]#
+
+================================================
+Deploying a sample app for verification:
+
+git clone https://github.com/kubernetes-sigs/aws-ebs-csi-driver.git
+
+Create mongodb pod:
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo
+spec:
+  selector:
+    matchLabels:
+      app: mongo
+  serviceName: "mongo"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mongo
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: mongo
+        image: mongo
+        command: 
+        - mongod 
+        - "--bind_ip_all"
+        - "--replSet"
+        - rs0
+        ports:
+        - containerPort: 27017
+        volumeMounts:
+        - name: mongo-volume
+          mountPath: /data/db
+  volumeClaimTemplates:
+  - metadata:
+      name: mongo-volume
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+
+
+================================================
+[root@ip-172-31-47-231 mongodb]# kubectl get pods
+NAME      READY   STATUS    RESTARTS   AGE
+mongo-0   1/1     Running   0          4m12s
+mongo-1   1/1     Running   0          3m51s
+mongo-2   1/1     Running   0          3m30s
+[root@ip-172-31-47-231 mongodb]# kubectl get pv
+NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS   CLAIM                          STORAGECLASS   REASON   AGE
+pvc-82e10e1a-5b04-46a0-8efa-b6b03fa626dc   1Gi        RWO            Delete           Bound    default/mongo-volume-mongo-0   gp2                     4m10s
+pvc-b5ae1441-0a01-4f58-a834-6462b0d64a61   1Gi        RWO            Delete           Bound    default/mongo-volume-mongo-1   gp2                     3m50s
+pvc-bc6e623e-79d4-4a8f-a836-76af3ac916e5   1Gi        RWO            Delete           Bound    default/mongo-volume-mongo-2   gp2                     3m29s
+[root@ip-172-31-47-231 mongodb]# kubectl get pvc
+NAME                   STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   AGE
+mongo-volume-mongo-0   Bound    pvc-82e10e1a-5b04-46a0-8efa-b6b03fa626dc   1Gi        RWO            gp2            4m26s
+mongo-volume-mongo-1   Bound    pvc-b5ae1441-0a01-4f58-a834-6462b0d64a61   1Gi        RWO            gp2            4m5s
+mongo-volume-mongo-2   Bound    pvc-bc6e623e-79d4-4a8f-a836-76af3ac916e5   1Gi        RWO            gp2            3m44s
+[root@ip-172-31-47-231 mongodb]#
+
+==============================================================================

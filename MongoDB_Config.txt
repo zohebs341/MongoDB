@@ -1,0 +1,195 @@
+MongoDB Configuration : Statefullset
+
+ kubectl exec -it mongo-0 -- mongo
+
+> rs.initiate()
+{
+        "info2" : "no configuration specified. Using a default configuration for the set",
+        "me" : "mongo-0:27017",
+        "ok" : 1,
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1600432580, 1),
+                "signature" : {
+                        "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                        "keyId" : NumberLong(0)
+                }
+        },
+        "operationTime" : Timestamp(1600432580, 1)
+}
+
+-------
+rs0:SECONDARY> var cfg = rs.conf()
+rs0:PRIMARY>
+
+============
+Add member abd reconfigure:
+
+rs0:SECONDARY> var cfg = rs.conf()
+rs0:PRIMARY> cfg.members[0].host="mongo-0.mongo:27017"
+mongo-0.mongo:27017
+rs0:PRIMARY> rs.reconfig(cfg)
+{
+        "ok" : 1,
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1600432783, 1),
+                "signature" : {
+                        "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                        "keyId" : NumberLong(0)
+                }
+        },
+        "operationTime" : Timestamp(1600432783, 1)
+}
+
+=====================
+rs0:PRIMARY> rs.status()
+{
+        "set" : "rs0",
+        "date" : ISODate("2020-09-18T12:40:34.165Z"),
+        "myState" : 1,
+        "term" : NumberLong(1),
+        "syncSourceHost" : "",
+        "syncSourceId" : -1,
+        "heartbeatIntervalMillis" : NumberLong(2000),
+        "majorityVoteCount" : 1,
+        "writeMajorityCount" : 1,
+        "votingMembersCount" : 1,
+        "writableVotingMembersCount" : 1,
+        "optimes" : {
+                "lastCommittedOpTime" : {
+                        "ts" : Timestamp(1600432830, 1),
+                        "t" : NumberLong(1)
+                },
+                "lastCommittedWallTime" : ISODate("2020-09-18T12:40:30.988Z"),
+                "readConcernMajorityOpTime" : {
+                        "ts" : Timestamp(1600432830, 1),
+                        "t" : NumberLong(1)
+                },
+                "readConcernMajorityWallTime" : ISODate("2020-09-18T12:40:30.988Z"),
+                "appliedOpTime" : {
+                        "ts" : Timestamp(1600432830, 1),
+                        "t" : NumberLong(1)
+                },
+                "durableOpTime" : {
+                        "ts" : Timestamp(1600432830, 1),
+                        "t" : NumberLong(1)
+                },
+                "lastAppliedWallTime" : ISODate("2020-09-18T12:40:30.988Z"),
+                "lastDurableWallTime" : ISODate("2020-09-18T12:40:30.988Z")
+        },
+        "lastStableRecoveryTimestamp" : Timestamp(1600432820, 1),
+        "electionCandidateMetrics" : {
+                "lastElectionReason" : "electionTimeout",
+                "lastElectionDate" : ISODate("2020-09-18T12:36:20.910Z"),
+                "electionTerm" : NumberLong(1),
+                "lastCommittedOpTimeAtElection" : {
+                        "ts" : Timestamp(0, 0),
+                        "t" : NumberLong(-1)
+                },
+                "lastSeenOpTimeAtElection" : {
+                        "ts" : Timestamp(1600432580, 1),
+                        "t" : NumberLong(-1)
+                },
+                "numVotesNeeded" : 1,
+                "priorityAtElection" : 1,
+                "electionTimeoutMillis" : NumberLong(10000),
+                "newTermStartDate" : ISODate("2020-09-18T12:36:20.956Z"),
+                "wMajorityWriteAvailabilityDate" : ISODate("2020-09-18T12:36:20.984Z")
+        },
+        "members" : [
+                {
+                        "_id" : 0,
+                        "name" : "mongo-0.mongo:27017",
+                        "health" : 1,
+                        "state" : 1,
+                        "stateStr" : "PRIMARY",
+                        "uptime" : 1125,
+                        "optime" : {
+                                "ts" : Timestamp(1600432830, 1),
+                                "t" : NumberLong(1)
+                        },
+                        "optimeDate" : ISODate("2020-09-18T12:40:30Z"),
+                        "syncSourceHost" : "",
+                        "syncSourceId" : -1,
+                        "infoMessage" : "",
+                        "electionTime" : Timestamp(1600432580, 2),
+                        "electionDate" : ISODate("2020-09-18T12:36:20Z"),
+                        "configVersion" : 2,
+                        "configTerm" : 1,
+                        "self" : true,
+                        "lastHeartbeatMessage" : ""
+                }
+        ],
+        "ok" : 1,
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1600432830, 1),
+                "signature" : {
+                        "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                        "keyId" : NumberLong(0)
+                }
+        },
+        "operationTime" : Timestamp(1600432830, 1)
+}
+rs0:PRIMARY>
+=====================================================
+rs0:PRIMARY> rs.add("mongo-1.mongo:27017")
+{
+        "ok" : 1,
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1600432926, 1),
+                "signature" : {
+                        "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                        "keyId" : NumberLong(0)
+                }
+        },
+        "operationTime" : Timestamp(1600432926, 1)
+}
+===================================================
+rs0:PRIMARY> rs.add("mongo-2.mongo:27017")
+{
+        "ok" : 1,
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1600432963, 1),
+                "signature" : {
+                        "hash" : BinData(0,"AAAAAAAAAAAAAAAAAAAAAAAAAAA="),
+                        "keyId" : NumberLong(0)
+                }
+        },
+        "operationTime" : Timestamp(1600432963, 1)
+}
+================================================
+[root@ip-172-31-47-231 mongodb]# kubectl run mongo --rm -it --image mongo -- sh
+kubectl run --generator=deployment/apps.v1 is DEPRECATED and will be removed in a future version. Use kubectl run --generator=run-pod/v1 or kubectl create instead.
+If you don't see a command prompt, try pressing enter.
+
+#
+===================================
+# mongo mongodb://mongo-0.mongo,mongo-1.mongo,mongo-2.mongo
+MongoDB shell version v4.4.1
+connecting to: mongodb://mongo-0.mongo:27017,mongo-1.mongo:27017,mongo-2.mongo:27017/?compressors=disabled&gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("4ce421b8-d97f-422a-af8a-6489690b82bd") }
+MongoDB server version: 4.4.1
+Welcome to the MongoDB shell.
+For interactive help, type "help".
+For more comprehensive documentation, see
+        https://docs.mongodb.com/
+Questions? Try the MongoDB Developer Community Forums
+        https://community.mongodb.com
+---
+The server generated these startup warnings when booting:
+        2020-09-18T12:21:49.313+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+        2020-09-18T12:21:49.898+00:00: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+        2020-09-18T12:21:49.898+00:00: You are running this process as the root user, which is not recommended
+---
+---
+        Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+        metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+
+        The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+        and anyone you share the URL with. MongoDB may use this information to make product
+        improvements and to suggest MongoDB products and deployment options to you.
+
+        To enable free monitoring, run the following command: db.enableFreeMonitoring()
+        To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+---
+rs0:PRIMARY>
+========================================================
